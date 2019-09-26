@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"golang.org/x/oauth2/google"
@@ -23,13 +24,12 @@ var (
 	location string
 	verbose  bool
 
-	client *http.Client
+	client   *http.Client
+	failures int32 // access automically
 )
 
 const (
 	apiEndpoint = "https://reachability.googleapis.com/v1beta1"
-
-	reachable = "REACHABLE"
 )
 
 func main() {
@@ -70,10 +70,18 @@ func main() {
 			if err != nil {
 				log.Fatalf("Error when triggering rerun for %v: %v", test, err)
 			}
+
+			if !r.Reachable() {
+				atomic.AddInt32(&failures, 1)
+			}
 			printResult(r)
 		}(tt)
 	}
 	wg.Wait()
+
+	if failures > 0 {
+		os.Exit(1)
+	}
 }
 
 func printResult(r resourceResponse) {
@@ -82,7 +90,7 @@ func printResult(r resourceResponse) {
 	fmt.Fprintf(buf, "%v\t", r.ReachabilityDetails.Result)
 
 	out := os.Stdout
-	if r.ReachabilityDetails.Result != reachable {
+	if !r.Reachable() {
 		out = os.Stderr
 	}
 	fmt.Fprintln(out, buf.String())
@@ -170,6 +178,13 @@ type resourceResponse struct {
 	Name                string                      `json:"name"`
 	UpdateTime          time.Time                   `json:"updateTime"`
 	ReachabilityDetails reachabilityDetailsResponse `json:"reachabilityDetails"`
+}
+
+func (r resourceResponse) Reachable() bool {
+	if r.ReachabilityDetails.Result == "REACHABLE" {
+		return true
+	}
+	return false
 }
 
 type reachabilityDetailsResponse struct {
