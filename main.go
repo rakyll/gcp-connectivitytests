@@ -20,7 +20,6 @@ import (
 
 var (
 	project  string
-	token    string
 	location string
 	verbose  bool
 
@@ -58,8 +57,8 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(testIDs))
 	for _, tt := range testIDs {
+		wg.Add(1)
 		go func(test string) {
 			defer wg.Done()
 
