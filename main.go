@@ -28,15 +28,12 @@ var (
 	failures int32 // access automically
 )
 
-const (
-	apiEndpoint = "https://reachability.googleapis.com/v1beta1"
-)
+const apiEndpoint = "https://reachability.googleapis.com/v1beta1"
 
 func main() {
 	ctx := context.Background()
 
 	flag.StringVar(&project, "project", "", "")
-	flag.StringVar(&token, "token", "", "")
 	flag.StringVar(&location, "location", "", "")
 	flag.BoolVar(&verbose, "v", false, "")
 	flag.Parse()
