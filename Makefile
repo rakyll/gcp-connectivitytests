@@ -1,4 +1,4 @@
-binary = gcp-reachability
+binary = gcp-connectivitytests
 version = 0.0.1
 
 release:
