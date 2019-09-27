@@ -1,4 +1,4 @@
-module github.com/rakyll/gcp-reachability
+module github.com/rakyll/gcp-connectivitytests
 
 go 1.13
 
