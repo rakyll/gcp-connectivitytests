@@ -22,31 +22,40 @@ var (
 	project  string
 	location string
 	verbose  bool
+	gen      string // travis, circleci
 
 	client   *http.Client
 	failures int32 // access automically
 )
 
-const apiEndpoint = "https://reachability.googleapis.com/v1beta1"
+const (
+	apiEndpoint = "https://reachability.googleapis.com/v1beta1"
+	scope       = "https://www.googleapis.com/auth/cloud-platform"
+)
 
 func main() {
 	ctx := context.Background()
-
 	flag.StringVar(&project, "project", "", "")
 	flag.StringVar(&location, "location", "", "")
 	flag.BoolVar(&verbose, "v", false, "")
+	flag.StringVar(&gen, "gen", "", "")
 	flag.Parse()
 
 	if project == "" {
 		log.Fatalln("Please provide a project name")
 	}
+
+	if gen != "" {
+		generate(gen)
+	}
+
 	if location == "" {
 		location = "global"
 	}
 
 	// List all matching tests and rerun.
 	var err error
-	client, err = google.DefaultClient(ctx)
+	client, err = google.DefaultClient(ctx, scope)
 	if err != nil {
 		log.Fatal(err)
 	}
