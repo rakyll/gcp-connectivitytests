@@ -8,8 +8,6 @@ Linux 64-bit:
 $ curl http://storage.googleapis.com/jbd-releases/gcp-connectivitytests-0.0.1-linuxamd64 > gcp-connectivitytests && chmod +x gcp-connectivitytests
 ```
 
-If you have Go installed, use:
-
 Use Google Application Default Credentials to authenticate.
 
 ----
@@ -21,6 +19,8 @@ to run tests as a post-commit hook for your master branch.
 
 Download a JSON service account key from https://console.cloud.google.com/iam-admin/serviceaccounts.
 You need to have Travis CLI installed in order to use this command.
+
+Run the following command to generate the Travis CI manifest:
 
 ```
 $ gcp-connectivitytests -gen=travis -project=PROJECT_ID -secretkey=key.json > .travis.yml
@@ -42,6 +42,8 @@ script:
 
 Download a JSON service account key from https://console.cloud.google.com/iam-admin/serviceaccounts.
 Provide the contents of the key as the GCLOUD_SERVICE_KEY env variable.
+
+Run the following command to generate the Circle CI manifest:
 
 ```
 $ gcp-connectivitytests -gen=circleci -project=PROJECT_ID > .circleci/config.yml
