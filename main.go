@@ -19,10 +19,11 @@ import (
 )
 
 var (
-	project  string
-	location string
-	verbose  bool
-	gen      string // travis, circleci
+	project   string
+	location  string
+	verbose   bool
+	gen       string // travis, circleci
+	secretKey string
 
 	client   *http.Client
 	failures int32 // access automically
@@ -39,6 +40,7 @@ func main() {
 	flag.StringVar(&location, "location", "", "")
 	flag.BoolVar(&verbose, "v", false, "")
 	flag.StringVar(&gen, "gen", "", "")
+	flag.StringVar(&secretKey, "secretkey", "", "")
 	flag.Parse()
 
 	if project == "" {
@@ -46,7 +48,10 @@ func main() {
 	}
 
 	if gen != "" {
-		generate(gen)
+		if err := generate(gen); err != nil {
+			log.Fatalf("Cannot generate: %v", err)
+		}
+		return
 	}
 
 	if location == "" {
