@@ -23,7 +23,7 @@ Download a JSON service account key from https://console.cloud.google.com/iam-ad
 You need to have Travis CLI installed in order to use this command.
 
 ```
-$ gcp-connectivitytests -gen=travis -project=PROJECT_ID -secretkey=key.json
+$ gcp-connectivitytests -gen=travis -project=PROJECT_ID -secretkey=key.json > .travis.yml
 branches:
   only:
     - master
@@ -40,4 +40,21 @@ script:
 
 # Circle CI
 
-Coming soon.
+Download a JSON service account key from https://console.cloud.google.com/iam-admin/serviceaccounts.
+Provide the contents of the key as the GCLOUD_SERVICE_KEY env variable.
+
+```
+$ gcp-connectivitytests -gen=circleci -project=PROJECT_ID > .circleci/config.yml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: google/cloud-sdk
+
+    steps:
+      - run: |
+          apt-get install wget -y
+          wget https://storage.googleapis.com/jbd-releases/gcp-connectivitytests-0.0.1-linuxamd64 && chmod +x ./gcp-connectivitytests-0.0.1-linuxamd64
+          echo $GCLOUD_SERVICE_KEY > key.json
+          GOOGLE_APPLICATION_CREDENTIALS=key.json ./gcp-connectivitytests-0.0.1-linuxamd64 -project=PROJECT_ID
+```
