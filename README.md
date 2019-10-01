@@ -38,7 +38,7 @@ script:
  - GOOGLE_APPLICATION_CREDENTIALS=key.json ./gcp-connectivitytests-0.0.1 -project=PROJECT_ID
 ```
 
-# Circle CI
+## Circle CI
 
 Download a JSON service account key from https://console.cloud.google.com/iam-admin/serviceaccounts.
 Provide the contents of the key as the GCLOUD_SERVICE_KEY env variable.
