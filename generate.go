@@ -16,6 +16,8 @@ func generate(t string) error {
 	switch t {
 	case "travis":
 		return generateTravis()
+	case "circleci":
+		return generateCircle()
 	}
 	return fmt.Errorf("unsupported gen target %q", t)
 }
@@ -50,22 +52,31 @@ func generateTravis() error {
 			decryptCommand = strings.TrimSpace(string(line))
 		}
 	}
-	travisTmpl.Execute(os.Stdout, travisData{
+	return travisTmpl.Execute(os.Stdout, travisData{
 		Decrypt:   decryptCommand,
-		Binary:    binary,
-		Version:   version,
+		Binary:    linuxBinary,
 		Project:   project,
 		SecretKey: filepath.Base(secretKey),
 	})
-	return nil
+}
+
+func generateCircle() error {
+	return circleTmpl.Execute(os.Stdout, travisData{
+		Binary:  linuxBinary,
+		Project: project,
+	})
 }
 
 type travisData struct {
 	Decrypt   string
 	Binary    string
-	Version   string
 	Project   string
 	SecretKey string
+}
+
+type circleData struct {
+	Binary  string
+	Project string
 }
 
 var travisTmpl, _ = template.New("travis").Parse(`branches:
@@ -76,8 +87,22 @@ before_install:
  - {{.Decrypt}}
 
 install:
- - wget https://storage.googleapis.com/jbd-releases/{{.Binary}}-{{.Version}}-linuxamd64 && chmod +x ./{{.Binary}}-{{.Version}}
+ - wget https://storage.googleapis.com/jbd-releases/{{.Binary}} && chmod +x ./{{.Binary}}
 
 script:
- - GOOGLE_APPLICATION_CREDENTIALS={{.SecretKey}} ./{{.Binary}}-{{.Version}} -project={{.Project}}
+ - GOOGLE_APPLICATION_CREDENTIALS={{.SecretKey}} ./{{.Binary}} -project={{.Project}}
+`)
+
+var circleTmpl, _ = template.New("circleci").Parse(`version: 2
+jobs:
+  build:
+    docker:
+      - image: google/cloud-sdk
+
+    steps:
+      - run: |
+          apt-get install wget -y
+          wget https://storage.googleapis.com/jbd-releases/{{.Binary}} && chmod +x ./{{.Binary}}
+          echo $GCLOUD_SERVICE_KEY > key.json
+          GOOGLE_APPLICATION_CREDENTIALS=key.json ./{{.Binary}} -project={{.Project}}
 `)
