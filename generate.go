@@ -76,7 +76,7 @@ before_install:
  - {{.Decrypt}}
 
 install:
- - wget https://storage.googleapis.com/jbd-releases/{{.Binary}}-{{.Version}} && chmod +x ./{{.Binary}}-{{.Version}}
+ - wget https://storage.googleapis.com/jbd-releases/{{.Binary}}-{{.Version}}-linuxamd64 && chmod +x ./{{.Binary}}-{{.Version}}
 
 # Build the website
 script:
