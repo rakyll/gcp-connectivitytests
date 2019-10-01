@@ -78,7 +78,6 @@ before_install:
 install:
  - wget https://storage.googleapis.com/jbd-releases/{{.Binary}}-{{.Version}}-linuxamd64 && chmod +x ./{{.Binary}}-{{.Version}}
 
-# Build the website
 script:
  - GOOGLE_APPLICATION_CREDENTIALS={{.SecretKey}} ./{{.Binary}}-{{.Version}} -project={{.Project}}
 `)

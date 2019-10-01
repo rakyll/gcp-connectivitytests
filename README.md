@@ -34,7 +34,6 @@ before_install:
 install:
  - wget https://storage.googleapis.com/jbd-releases/gcp-connectivitytests-0.0.1-linuxamd64 && chmod +x ./gcp-connectivitytests-0.0.1
 
-# Build the website
 script:
  - GOOGLE_APPLICATION_CREDENTIALS=key.json ./gcp-connectivitytests-0.0.1 -project=PROJECT_ID
 ```
