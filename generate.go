@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -54,7 +55,7 @@ func generateTravis() error {
 		Binary:    binary,
 		Version:   version,
 		Project:   project,
-		SecretKey: secretKey,
+		SecretKey: filepath.Base(secretKey),
 	})
 	return nil
 }
