@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -21,6 +22,7 @@ import (
 var (
 	project   string
 	location  string
+	tests     string
 	verbose   bool
 	gen       string // travis, circleci
 	secretKey string
@@ -38,6 +40,7 @@ func main() {
 	ctx := context.Background()
 	flag.StringVar(&project, "project", "", "")
 	flag.StringVar(&location, "location", "", "")
+	flag.StringVar(&tests, "tests", "", "")
 	flag.BoolVar(&verbose, "v", false, "")
 	flag.StringVar(&gen, "gen", "", "")
 	flag.StringVar(&secretKey, "secretkey", "", "")
@@ -65,9 +68,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	testIDs, err := listTests(ctx)
-	if err != nil {
-		log.Fatal(err)
+	var testIDs []string
+	if tests == "" {
+		testIDs, err = listTests(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		testIDs = strings.Split(tests, ",")
 	}
 
 	var wg sync.WaitGroup
