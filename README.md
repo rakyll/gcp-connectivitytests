@@ -60,3 +60,6 @@ jobs:
           echo $GCLOUD_SERVICE_KEY > key.json
           GOOGLE_APPLICATION_CREDENTIALS=key.json ./gcp-connectivitytests-0.0.1-linuxamd64 -project=PROJECT_ID
 ```
+
+See [rakyll/gcp-connectivitytests-example](https://github.com/rakyll/gcp-connectivitytests-example) as an
+example repo setup with Travis and Circle CI.
